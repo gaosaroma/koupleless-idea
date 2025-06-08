@@ -166,6 +166,7 @@ object ParseJavaService {
         val parserConfiguration = ParserConfiguration()
         val symbolResolver = JavaSymbolSolver(combinedSolver)
         parserConfiguration.setSymbolResolver(symbolResolver)
+//        parserConfiguration.setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_17)
         return parserConfiguration
     }
 

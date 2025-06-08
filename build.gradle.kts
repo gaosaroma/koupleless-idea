@@ -37,8 +37,8 @@ dependencies{
     // 修改 pom 使用
     implementation("org.apache.maven:maven-model:3.6.3")
     // 修改 class 使用
-    implementation("com.github.javaparser:javaparser-core:3.25.6")
-    implementation("com.github.javaparser:javaparser-symbol-solver-core:3.25.6")
+    implementation("com.github.javaparser:javaparser-core:3.26.0")
+    implementation("com.github.javaparser:javaparser-symbol-solver-core:3.26.0")
     // 修改 yml 使用
     implementation("org.yaml:snakeyaml:2.1")
     // 修改 properties 使用
@@ -101,7 +101,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("222")
-        untilBuild.set("232.*")
+//        untilBuild.set("232.*")
     }
 
     signPlugin {

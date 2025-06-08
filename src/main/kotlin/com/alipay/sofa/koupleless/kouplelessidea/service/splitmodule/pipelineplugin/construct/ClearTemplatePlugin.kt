@@ -22,6 +22,7 @@ object ClearTemplatePlugin: PipelinePlugin() {
         val moduleContext = splitModuleContext.moduleContext
         when(moduleContext.moduleTemplateType){
             SplitConstants.Labels.SINGLE_BUNDLE_TEMPLATE.tag -> clearSingleBundleTemplate(moduleContext)
+            SplitConstants.Labels.MULTI_BUNDLE_TEMPLATE.tag -> clearMultiBundleTemplate(moduleContext)
         }
     }
 
@@ -48,5 +49,34 @@ object ClearTemplatePlugin: PipelinePlugin() {
                 }
             }
         }
+    }
+
+    /**
+     * 清理多 Bundle 模板：
+     * @param
+     * @return
+     */
+    private fun clearMultiBundleTemplate(moduleContext: ModuleContext) {
+        val modulePath = moduleContext.getModulePath()
+        val appFolder = File(StrUtil.join(FileUtil.FILE_SEPARATOR,modulePath,"app"))
+        val files = appFolder.listFiles()
+        files?.let {
+            it.forEach { file->
+                if(file.name!="bootstrap"){
+                    FileUtil.del(file)
+                }
+            }
+        }
+
+        val bootstrapFile = FileParseUtil.parseBootstrapPom(modulePath)
+        val bootstrapPom = MavenPomUtil.buildPomModel(bootstrapFile)
+        bootstrapPom.dependencies.removeIf{it.groupId==moduleContext.groupId && it.artifactId.startsWith("${moduleContext.artifactId}-")}
+        MavenPomUtil.writePomModel(bootstrapFile,bootstrapPom)
+
+        val parentFile = FileParseUtil.parsePomByBundle(modulePath)
+        val parentPom = MavenPomUtil.buildPomModel(parentFile)
+        parentPom.modules.clear()
+        parentPom.dependencyManagement.dependencies.removeIf{it.groupId==moduleContext.groupId && it.artifactId.startsWith("${moduleContext.artifactId}-") && !it.artifactId.endsWith("-bootstrap")}
+        MavenPomUtil.writePomModel(parentFile,parentPom)
     }
 }

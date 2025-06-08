@@ -1,6 +1,7 @@
 package com.alipay.sofa.koupleless.kouplelessidea.service.splitmodule.pipelinestage
 
 import com.alipay.sofa.koupleless.kouplelessidea.model.splitmodule.staticparser.SplitModuleContext
+import com.alipay.sofa.koupleless.kouplelessidea.service.splitmodule.pipelineservice.integrate.IntegrateMultiBundlePomService
 import com.alipay.sofa.koupleless.kouplelessidea.service.splitmodule.pipelineservice.integrate.IntegrateSingleBundlePomService
 import com.alipay.sofa.koupleless.kouplelessidea.service.splitmodule.pipelineservice.integrate.MoveSegmentService
 import com.alipay.sofa.koupleless.kouplelessidea.util.constant.SplitConstants
@@ -21,6 +22,9 @@ class IntegrateStage(proj: Project): PipelineStage(proj) {
         when(splitModuleContext.moduleContext.moduleTemplateType){
             SplitConstants.Labels.SINGLE_BUNDLE_TEMPLATE.tag ->{
                 this.addService(IntegrateSingleBundlePomService(proj))
+            }
+            SplitConstants.Labels.MULTI_BUNDLE_TEMPLATE.tag ->{
+                this.addService(IntegrateMultiBundlePomService(proj))
             }
         }
     }

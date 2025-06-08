@@ -51,6 +51,8 @@ interface SplitConstants {
          */
         val SINGLE_BUNDLE_TEMPLATE_ARCHETYPE = ArchetypeInfo("com.alipay.sofa.koupleless","koupleless-common-module-archetype","1.1.0")
 
+        val MULTI_BUNDLE_TEMPLATE_ARCHETYPE = ArchetypeInfo("com.alipay.sofa.koupleless","koupleless-layered-module-archetype","0.0.1-SNAPSHOT")
+
         /**
          * 生成Bean的注解，暂不支持扫描在方法上的@Bean
          */
@@ -188,6 +190,7 @@ interface SplitConstants {
 
     enum class Labels(val tag: String, val text: String){
         SINGLE_BUNDLE_TEMPLATE("SINGLE_BUNDLE_TEMPLATE","单bundle模版"),
+        MULTI_BUNDLE_TEMPLATE("MULTI_BUNDLE_TEMPLATE","多bundle模版"),
         ADD_MODULE("ADD_MODULE","点击新增模块"),
         MONO_MODE("MONO_MODE","共库模式"),
         INDEPENDENT_MODE("INDEPENDENT_MODE","独立仓库模式"),

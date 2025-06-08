@@ -31,6 +31,7 @@ object ConstructModulePlugin: PipelinePlugin() {
     private fun createFilesInModule(splitModuleContext: SplitModuleContext) {
         when(splitModuleContext.moduleContext.moduleTemplateType){
             SplitConstants.Labels.SINGLE_BUNDLE_TEMPLATE.tag -> createFilesInSingleBundle(splitModuleContext)
+            SplitConstants.Labels.MULTI_BUNDLE_TEMPLATE.tag -> createFilesInMultiBundle(splitModuleContext)
         }
     }
 
@@ -38,6 +39,37 @@ object ConstructModulePlugin: PipelinePlugin() {
         val moduleContext = splitModuleContext.moduleContext
         val splitMode = splitModuleContext.splitMode
         createFilesInSimpleBundle(moduleContext.getModulePath(),moduleContext.root,moduleContext,splitMode)
+    }
+
+    private fun createFilesInMultiBundle(splitModuleContext: SplitModuleContext) {
+        val moduleContext = splitModuleContext.moduleContext
+        val appFolder = FileParseUtil.getAppFolder(moduleContext.getModulePath())
+        val appNode = ModuleTreeUtil.getBundleRoot(moduleContext.root)!!
+        val bundleRootNodes = appNode.children.filter { ModuleTreeUtil.isBundle(it) }
+        bundleRootNodes.forEach {
+            if(it.getName()!="bootstrap"){
+                val bundleRootPath =  StrUtil.join(FileUtil.FILE_SEPARATOR,appFolder,it.getName())
+                val splitMode = splitModuleContext.splitMode
+                createFilesInBundle(bundleRootPath,it,moduleContext,splitMode)
+            }
+        }
+    }
+
+    private fun createFilesInBundle(bundlePath:String, bundleNode: FileWrapperTreeNode, moduleContext: ModuleContext, mode:SplitConstants.SplitModeEnum){
+        if(ModuleTreeUtil.isParentBundle(bundleNode)){
+            // 创建父bundle
+            FileUtil.mkdir(bundlePath)
+
+            // 创建子bundle
+            bundleNode.children.forEach {
+                if(ModuleTreeUtil.isBundle(it)){
+                    val subBundlePath = StrUtil.join(FileUtil.FILE_SEPARATOR,bundlePath,it.getName())
+                    createFilesInBundle(subBundlePath,it,moduleContext,mode)
+                }
+            }
+        }else{
+            createFilesInSimpleBundle(bundlePath, bundleNode, moduleContext,mode)
+        }
     }
 
     private fun createFilesInSimpleBundle(bundlePath:String, bundleNode:FileWrapperTreeNode, moduleContext: ModuleContext, mode:SplitConstants.SplitModeEnum){

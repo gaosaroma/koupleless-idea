@@ -152,6 +152,10 @@ object FileParseUtil {
         return File(StrUtil.join(FILE_SEPARATOR,projPath,"pom.xml"))
     }
 
+    fun getAppFolder(projPath: String):File{
+        return File(StrUtil.join(FILE_SEPARATOR,projPath,"app"))
+    }
+
     fun listDirectory(file:File):List<File>{
         val dirs = file.listFiles()?.filter { it.isDirectory }
         return dirs ?: emptyList()

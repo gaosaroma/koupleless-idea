@@ -22,7 +22,8 @@ object ScanSrcBaseDefaultBeanPlugin: PipelinePlugin() {
         // 2. 解析 java 文件中的 bean，解析 bean 的类名到接口名的对应，和配置
         ParseJavaService.parseFromCache(
             srcBaseContext,
-            listOf(DefaultBeanVisitor, BeanExtraInfoVisitor,MethodBeanVisitor, BeanDependedOnVisitor, MybatisConfigVisitor, MybatisMethodConfigVisitor,MybatisMapperInterfaceVisitor),
+//            listOf(DefaultBeanVisitor, BeanExtraInfoVisitor,MethodBeanVisitor, BeanDependedOnVisitor, MybatisConfigVisitor, MybatisMethodConfigVisitor,MybatisMapperInterfaceVisitor),
+            listOf(DefaultBeanVisitor, BeanExtraInfoVisitor,MethodBeanVisitor, BeanDependedOnVisitor),
             srcBaseContext,
             pathBlacklist
         )

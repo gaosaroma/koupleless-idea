@@ -7,6 +7,7 @@ import com.alipay.sofa.koupleless.kouplelessidea.model.splitmodule.ModuleDescrip
 import com.alipay.sofa.koupleless.kouplelessidea.util.IDEConstants
 import com.alipay.sofa.koupleless.kouplelessidea.util.JComponentUtil
 import com.alipay.sofa.koupleless.kouplelessidea.util.constant.SplitConstants
+import com.alipay.sofa.koupleless.kouplelessidea.util.constant.SplitConstants.Companion.MULTI_BUNDLE_TEMPLATE_ARCHETYPE
 import com.alipay.sofa.koupleless.kouplelessidea.util.constant.SplitConstants.Companion.SINGLE_BUNDLE_TEMPLATE_ARCHETYPE
 import com.alipay.sofa.koupleless.kouplelessidea.util.ui.CollapsedPanel
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
@@ -40,8 +41,8 @@ class ModuleDescriptionPanel(private val proj: Project,titleComp: Component) : C
     private val modulePackageField = JBTextField("")
     private val moduleNameLabel = JBLabel("模块名：")
     private val moduleNameField = JBTextField("")
-    private val moduleTemplateComboBox = ComboBox(arrayOf(SplitConstants.Labels.SINGLE_BUNDLE_TEMPLATE))
-    private val moduleModeComboBox = ComboBox(arrayOf(SplitConstants.Labels.MONO_MODE, SplitConstants.Labels.INDEPENDENT_MODE))
+    private val moduleTemplateComboBox = ComboBox(arrayOf(SplitConstants.Labels.SINGLE_BUNDLE_TEMPLATE,SplitConstants.Labels.MULTI_BUNDLE_TEMPLATE))
+    private val moduleModeComboBox = ComboBox(arrayOf(SplitConstants.Labels.INDEPENDENT_MODE, SplitConstants.Labels.MONO_MODE))
     private val moduleIndependentLocationButton: TextFieldWithBrowseButton = TextFieldWithBrowseButton()
     private val locationDescriptionField =JBTextField("")
     private val confirmButton:JButton = JButton("确认并收起")
@@ -148,6 +149,7 @@ class ModuleDescriptionPanel(private val proj: Project,titleComp: Component) : C
     private fun getModuleTemplate(): ArchetypeInfo {
         return when (getModuleTemplateType()) {
             SplitConstants.Labels.SINGLE_BUNDLE_TEMPLATE.tag -> SINGLE_BUNDLE_TEMPLATE_ARCHETYPE
+            SplitConstants.Labels.MULTI_BUNDLE_TEMPLATE.tag -> MULTI_BUNDLE_TEMPLATE_ARCHETYPE
             else -> {SINGLE_BUNDLE_TEMPLATE_ARCHETYPE}
         }
     }
@@ -315,6 +317,7 @@ class ModuleDescriptionPanel(private val proj: Project,titleComp: Component) : C
 
                     moduleTemplateComboBox.removeAllItems()
                     moduleTemplateComboBox.addItem(SplitConstants.Labels.SINGLE_BUNDLE_TEMPLATE)
+                    moduleTemplateComboBox.addItem(SplitConstants.Labels.MULTI_BUNDLE_TEMPLATE)
                 }
                 SplitConstants.Labels.INDEPENDENT_MODE ->{
                     moduleIndependentLocationButton.isEnabled = true
@@ -324,6 +327,7 @@ class ModuleDescriptionPanel(private val proj: Project,titleComp: Component) : C
 
                     moduleTemplateComboBox.removeAllItems()
                     moduleTemplateComboBox.addItem(SplitConstants.Labels.SINGLE_BUNDLE_TEMPLATE)
+                    moduleTemplateComboBox.addItem(SplitConstants.Labels.MULTI_BUNDLE_TEMPLATE)
                 }
             }
 
@@ -406,12 +410,21 @@ class ModuleDescriptionPanel(private val proj: Project,titleComp: Component) : C
     fun getModuleMapperLocation(): String? {
         val moduleTemplateType = getModuleTemplateType()
         val modulePath = getModulePath() ?:return null
-        return StrUtil.join(IDEConstants.SEPARATOR, modulePath, "src","main","resources","mapper")
+        return if(moduleTemplateType == SplitConstants.Labels.SINGLE_BUNDLE_TEMPLATE.tag){
+            StrUtil.join(IDEConstants.SEPARATOR, modulePath, "src","main","resources","mapper")
+        }else{
+            StrUtil.join(IDEConstants.SEPARATOR, modulePath, "app", "service","src","main","resources","mapper")
+        }
     }
 
     fun getModuleMybatisDir():String?{
+        val moduleTemplateType = getModuleTemplateType()
         val modulePath = getModulePath() ?:return null
         val packageName = getModulePackageName() ?:return null
-        return StrUtil.join(IDEConstants.SEPARATOR, modulePath, "src","main","java",packageName.replace(".",IDEConstants.SEPARATOR),"common","dal","mybatis")
+        return if(moduleTemplateType == SplitConstants.Labels.SINGLE_BUNDLE_TEMPLATE.tag){
+            StrUtil.join(IDEConstants.SEPARATOR, modulePath, "src","main","java",packageName.replace(".",IDEConstants.SEPARATOR),"common","dal","mybatis")
+        }else{
+            StrUtil.join(IDEConstants.SEPARATOR, modulePath, "app", "service","src","main","java",packageName.replace(".",IDEConstants.SEPARATOR),"common","dal","mybatis")
+        }
     }
 }

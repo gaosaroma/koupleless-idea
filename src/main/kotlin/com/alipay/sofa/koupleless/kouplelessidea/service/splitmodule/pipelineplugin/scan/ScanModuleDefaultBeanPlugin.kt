@@ -23,7 +23,8 @@ object ScanModuleDefaultBeanPlugin: PipelinePlugin() {
         val javaPaths = moduleContext.getJavaFiles()
         ParseJavaService.parseOnly(javaPaths,
             parserConfiguration,
-            listOf(DefaultBeanVisitor, BeanExtraInfoVisitor,MethodBeanVisitor, BeanDependedOnVisitor,MybatisConfigVisitor,MybatisMethodConfigVisitor,MybatisMapperInterfaceVisitor),
+//            listOf(DefaultBeanVisitor, BeanExtraInfoVisitor,MethodBeanVisitor, BeanDependedOnVisitor,MybatisConfigVisitor,MybatisMethodConfigVisitor,MybatisMapperInterfaceVisitor),
+            listOf(DefaultBeanVisitor, BeanExtraInfoVisitor,MethodBeanVisitor, BeanDependedOnVisitor),
             moduleContext)
     }
 
